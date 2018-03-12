@@ -1,0 +1,18 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/sding/Bureau/stage_ingénieur/Cpp_traitement_image/detection_angle_cmake/YCBCr.cpp
+opencv2/opencv.hpp
+-
+vector
+-
+iostream
+-
+cmath
+-
+

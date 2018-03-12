@@ -1,0 +1,3 @@
+/home/sding/Bureau/stage_ingénieur/Cpp_traitement_image/detection_angle_cmake/CMakeFiles/edit_cache.dir
+/home/sding/Bureau/stage_ingénieur/Cpp_traitement_image/detection_angle_cmake/CMakeFiles/rebuild_cache.dir
+/home/sding/Bureau/stage_ingénieur/Cpp_traitement_image/detection_angle_cmake/CMakeFiles/detection_contours.dir

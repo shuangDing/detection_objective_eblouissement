@@ -1,0 +1,1 @@
+/usr/bin/c++      CMakeFiles/detection_contous.dir/YCBCr.cpp.o  -o detection_contous -rdynamic 
