@@ -24,21 +24,20 @@ int main(){
   //Mat image=imread("base_image/yeux_en_face.png", CV_LOAD_IMAGE_COLOR);
   
   //Les données à tester de notre bases
-  //Mat image=imread("base_image/Amandine1.jpg", CV_LOAD_IMAGE_COLOR);
-  // Mat image=imread("base_image/Amandine2.jpg", CV_LOAD_IMAGE_COLOR);
-  Mat image=imread("base_image/Chloe1.jpg", CV_LOAD_IMAGE_COLOR);
-  // Mat image=imread("base_image/Chloe2.jpg", CV_LOAD_IMAGE_COLOR); // ne peut rien détecter
-  
-  //Mat image=imread("base_image/Elise1.jpg", CV_LOAD_IMAGE_COLOR);
-  //Mat image=imread("base_image/Elise2.jpg", CV_LOAD_IMAGE_COLOR);
-  //Mat image=imread("base_image/Fanny1.jpg", CV_LOAD_IMAGE_COLOR);
-  // Mat image=imread("base_image/Fanny2.jpg", CV_LOAD_IMAGE_COLOR);// ne peut rien détecter, flou
+  //Mat image=imread("base_image/Amandine1.jpg", CV_LOAD_IMAGE_COLOR);//8
+  Mat image=imread("base_image/Amandine2.jpg", CV_LOAD_IMAGE_COLOR);//8
+  //Mat image=imread("base_image/Chloe1.jpg", CV_LOAD_IMAGE_COLOR);//8
+  //Mat image=imread("base_image/Chloe2.jpg", CV_LOAD_IMAGE_COLOR); //pas bon 
+  //Mat image=imread("base_image/Elise1.jpg", CV_LOAD_IMAGE_COLOR);//20
+  //Mat image=imread("base_image/Elise2.jpg", CV_LOAD_IMAGE_COLOR);// pas bon
+  //Mat image=imread("base_image/Fanny1.jpg", CV_LOAD_IMAGE_COLOR);//30
+  //Mat image=imread("base_image/Fanny2.jpg", CV_LOAD_IMAGE_COLOR);// ne peut rien détecter, flou
   //Mat image=imread("base_image/Fanny3.jpg", CV_LOAD_IMAGE_COLOR);// ne peut rien détecter, fermé
   
-  //Mat image=imread("base_image/Laurianne1.jpg", CV_LOAD_IMAGE_COLOR);
+  //Mat image=imread("base_image/Laurianne1.jpg", CV_LOAD_IMAGE_COLOR); //25
   //Mat image=imread("base_image/Laurianne2.jpg", CV_LOAD_IMAGE_COLOR); // ne peut rien détecter, fermé
   
-  
+  int element_ero_dila=15;
   
   if(!image.data){
     cout<<"Image non trouvée, veuillez entrer changer le nom d'image"<<endl;
@@ -226,7 +225,7 @@ int main(){
     clock_t ero_dila_start, ero_dila_end;
     ero_dila_start=clock();
     Mat image_binaire_dilate, element;
-    element=getStructuringElement(MORPH_ELLIPSE, Size(15,15));
+    element=getStructuringElement(MORPH_ELLIPSE, Size(element_ero_dila, element_ero_dila));
     //MORPH_RECT, MORPH_CROSS
     
     dilate(image_binaire, image_binaire, element);
@@ -270,10 +269,6 @@ int main(){
     resizeWindow("Harris coin détection des contours d'oeil", edge_coin_norm.rows, edge_coin_norm.cols);
     imshow("Harris coin détection des contours d'oeil", edge_coin_norm);
 
-
-
-
-    
 
     //L'ajout de rectangle de haar cascade
     string fichier_cascade="/opt/opencv/data/haarcascades/haarcascade_eye_tree_eyeglasses.xml";
@@ -330,11 +325,14 @@ int main(){
     vector<Point> droite_haut=droite_separe[0];
     vector<Point> droite_bas=droite_separe[1];
 
-    int taille_droite1_garde=droite_haut.size()/3;
-    int taille_droite2_garde=droite_bas.size()/3;
+    int taille_droite1_garde_debut=droite_haut.size()/3;
+    int taille_droite2_garde_debut=droite_bas.size()/3;
+    int taille_droite1_garde_fin=droite_haut.size()/5;
+    int taille_droite2_garde_fin=droite_bas.size()/5;
+
     
-    vector<Point> droite1(droite_haut.begin()+taille_droite1_garde, droite_haut.begin()+2*taille_droite1_garde);
-    vector<Point> droite2(droite_bas.begin()+taille_droite2_garde, droite_bas.begin()+2*taille_droite2_garde);
+    vector<Point> droite1(droite_haut.begin()+taille_droite1_garde_debut, droite_haut.end()-taille_droite1_garde_fin);
+    vector<Point> droite2(droite_bas.begin()+taille_droite2_garde_debut, droite_bas.end()-taille_droite2_garde_fin);
 
     for(int i=0;i<droite1.size();i++){
       int row=(int)droite1[i].y;
@@ -396,6 +394,26 @@ int main(){
     namedWindow("Image droite separée droite ", WINDOW_NORMAL);
     resizeWindow("Image droite separée droite ", image.rows, image.cols);
     imshow("Image droite separée droite ", image);
+
+    //Calcul l'angle d'oeil
+    //L'intersection des deux droites
+    Point intersection=intersection_deux_droite(p1_haut, p2_haut, p1_bas, p2_bas);
+
+    //Afficher le point d'intersection
+    image.at<Vec3b>(intersection.y, intersection.x)[0]=0;
+    image.at<Vec3b>(intersection.y, intersection.x)[1]=0;
+    image.at<Vec3b>(intersection.y, intersection.x)[2]=0;
+
+    float angle=angle_deux_droite(p1_haut, p1_bas, intersection);
+    cout<<"L'angle d'oeil détecté est: "<<angle<<" degré."<<endl;
+
+
+    
+    //Affichage image originale avec contours
+    namedWindow("Image droite separée droite ", WINDOW_NORMAL);
+    resizeWindow("Image droite separée droite ", image.rows, image.cols);
+    imshow("Image droite separée droite ", image);
+    
     
     waitKey(0);
     return 0;

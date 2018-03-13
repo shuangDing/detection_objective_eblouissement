@@ -5,6 +5,7 @@
 #include"detection_contours.h"
 #include<ctime>
 #include<algorithm>
+#include<math.h>
 
 using namespace std;
 using namespace cv;
@@ -91,6 +92,42 @@ vector<vector<Point> > separer_doite(Mat image, vector<Point> points){
   return points_droite;
   
 }
+
+Point intersection_deux_droite(Point p1_1, Point p1_2, Point p2_1, Point p2_2){
+  int x,y;
+  int X1=p1_1.x-p1_2.x;
+  int Y1=p1_1.y-p1_2.y;
+  int X2=p2_1.x-p2_2.x;
+  int Y2=p2_1.y-p2_2.y;
+
+  if(X1*Y2==X2*Y1)
+    return Point(int((p1_2.x+p2_1.x)/2), int((p1_2.y+p2_1.y)/2));
+
+  int A=X1*p1_1.y-Y1*p1_1.x;
+  int B=X2*p2_1.y-Y2*p2_1.x;
+  //X1*y=(Y1*x+A)
+  //X2*y=(Y2*x+B)
+
+  y=(A*Y2-B*Y1)/(X1*Y2-X2*Y1);
+  x=(B*X1-A*X2)/(Y1*X2-Y2*X1);
+
+  return Point(x,y);
+
+
+}
+float angle_deux_droite(Point &p1, Point &p2, Point &intersection){
+
+  float theta=atan2(p1.x -intersection.x, p1.y-intersection.y)-atan2(p2.x-intersection.x, p2.y-intersection.y);
+  if(theta>CV_PI)
+    theta -= 2*CV_PI;
+  if(theta<-CV_PI)
+    theta += 2*CV_PI;
+
+  theta=theta*180.0/CV_PI;
+  return theta;
+}
+
+
 
 
 
